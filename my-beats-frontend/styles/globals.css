@@ -1,0 +1,96 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font-family: "Lato", sans-serif;
+    vertical-align: baseline;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+#nprogress .bar {
+    background: #ffd719 !important;
+    z-index: 100000 !important;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 10px #ffd719, 0 0 5px #ffd719;
+    z-index: 100000 !important;
+}
+
+#nprogress .spinner-icon {
+    border-top-color: #ffd719 !important;
+    border-left-color: #ffd719 !important;
+    z-index: 100000 !important;
+}
+
+/* text editor */
+.quill {
+    border-radius: 10px;
+    border: 0.5px solid #ff0066;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+}
+.quill:hover {
+    border: 1px solid #ff0066;
+    box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
+}
+
+.quill:focus {
+    border: 1px solid #ff0066;
+    box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
+}
+.quill .ql-toolbar {
+    border: none !important;
+    border-bottom: 1px solid #ff0066 !important;
+}
+.ql-container {
+    border: none !important;
+    min-height: 250px;
+}
+
+.tableContainer {
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    /* min-height: 500px; */
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
+    padding: 10px;
+}
+.tableRoundImage {
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #eac4c8;
+    margin: 5px;
+}
+
+.dashboardAddButton {
+    background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
+    border: 0px;
+    border-radius: 3px;
+    box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
+    color: white;
+    height: 48px;
+    padding: 0px 30px;
+}
+
+.label {
+    font-variant-caps: all-small-caps;
+    font-size: 18px;
+    letter-spacing: 1.7px;
+    font-weight: 600;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.genreTagContainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+span {
+    background-color: linear-gradient(45deg, rgb(254, 107, 139, 0.7) 30%, hsl(21, 100%, 66%, 0.7) 90%) !important;
+    padding: 3px 5px !important;
+}
