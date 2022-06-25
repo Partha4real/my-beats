@@ -6,16 +6,14 @@ export const getAllArtist = () => async (dispatch) => {
     dispatch({
         type: loading.LOADING_TRUE,
     });
-
     const { data } = await api.getArtist();
-
-    dispatch({
-        type: loading.LOADING_FALSE,
-    });
 
     dispatch({
         type: actionTypes.FETCH_ARTIST,
         payload: data,
+    });
+    dispatch({
+        type: loading.LOADING_FALSE,
     });
 };
 

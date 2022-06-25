@@ -1,14 +1,54 @@
 import axios from "axios";
+import store from "../store/store";
 
-const API = axios.create({ baseURL: "http://localhost:5000/api/v1" });
+const API = axios.create({ baseURL: "http://localhost:8000/api/v1" });
 
-API.interceptors.request.use((req) => {
-    if (localStorage.getItem("user")) {
-        req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem("user")).token}`;
-    }
+const interceptor = (store) => {
+    const dispatch = store.dispatch;
+    API.interceptors.request.use(
+        (req) => {
+            if (localStorage.getItem("user")) {
+                req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem("user")).token}`;
+            }
 
-    return req;
-});
+            return req;
+        },
+        (error) => {
+            return error;
+        },
+    );
+
+    API.interceptors.response.use(
+        (res) => {
+            if (res.status === 200 || res.statusText === "ok") {
+                dispatch({
+                    type: "SET_ALERT",
+                    payload: {
+                        isOpen: true,
+                        message: res.data.message,
+                        alertType: "success",
+                    },
+                });
+            }
+            return res;
+        },
+        (error) => {
+            if (error.response.data.message || error.message) {
+                dispatch({
+                    type: "SET_ALERT",
+                    payload: {
+                        isOpen: true,
+                        message: error.response.data.message ? error.response.data.message : error.message,
+                        alertType: "error",
+                    },
+                });
+            }
+            return error.response;
+        },
+    );
+};
+
+interceptor(store);
 
 // Artist
 export const getArtist = () => API.get("/artist/getArtist");

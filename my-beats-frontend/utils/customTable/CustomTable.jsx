@@ -17,6 +17,7 @@ import GlobalFilter from "./GlobalFilter";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { makeStyles } from "@mui/styles";
 import CustomDialog from "../CustomDialog/CustomDialog";
+import uniqueId from "../../hooks/uniqueId";
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -30,7 +31,7 @@ const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref)
 
     return (
         <>
-            <input type="checkbox" ref={resolvedRef} {...rest} />
+            <input key={uniqueId()} type="checkbox" ref={resolvedRef} {...rest} />
         </>
     );
 });
@@ -85,11 +86,13 @@ export default function CustomTable({
             hooks.visibleColumns.push((columns) => {
                 return [
                     {
-                        id: "selection",
+                        id: uniqueId(),
                         Header: ({ getToggleAllRowsSelectedProps }) => (
                             <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
                         ),
-                        Cell: ({ row }) => <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />,
+                        Cell: ({ row }) => (
+                            <IndeterminateCheckbox key={uniqueId()} {...row.getToggleRowSelectedProps()} />
+                        ),
                     },
                     ...columns,
                 ];
@@ -156,41 +159,36 @@ export default function CustomTable({
                     </Grid>
                 ) : null}
                 <TableContainer>
-                    <Table {...getTableProps()} aria-labelledby="tableTitle" size="medium" stickyHeader>
+                    <Table {...getTableProps()} aria-labelledby="tableTitle" size="small" stickyHeader>
                         <TableHead>
                             {headerGroups.map((headerGroup) => (
-                                <TableRow {...headerGroup.getHeaderGroupProps()}>
+                                <TableRow key={uniqueId()} {...headerGroup.getHeaderGroupProps()}>
                                     {headerGroup.headers.map((column) => {
                                         return (
-                                            <React.Fragment key={column.id}>
-                                                <TableCell
-                                                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                                                    align="center"
+                                            <TableCell
+                                                key={uniqueId()}
+                                                {...column.getHeaderProps(column.getSortByToggleProps())}
+                                            >
+                                                <Typography
+                                                    key={uniqueId()}
+                                                    variant="button"
+                                                    color="black"
+                                                    component="div"
+                                                    fontWeight="700"
+                                                    display="flex"
                                                 >
-                                                    <Typography
-                                                        variant="button"
-                                                        color="black"
-                                                        component="p"
-                                                        fontWeight="700"
-                                                        display="flex"
-                                                        style={{
-                                                            placeItems: "center",
-                                                            justifyContent: "center",
-                                                        }}
-                                                    >
-                                                        {column.render("Header")}
-                                                        {column.isSorted ? (
-                                                            column.isSortedDesc ? (
-                                                                <KeyboardArrowDown fontSize="small" />
-                                                            ) : (
-                                                                <KeyboardArrowUp fontSize="small" />
-                                                            )
+                                                    {column.render("Header")}
+                                                    {column.isSorted ? (
+                                                        column.isSortedDesc ? (
+                                                            <KeyboardArrowDown fontSize="small" />
                                                         ) : (
-                                                            ""
-                                                        )}
-                                                    </Typography>
-                                                </TableCell>
-                                            </React.Fragment>
+                                                            <KeyboardArrowUp fontSize="small" />
+                                                        )
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </Typography>
+                                            </TableCell>
                                         );
                                     })}
                                 </TableRow>
@@ -198,12 +196,8 @@ export default function CustomTable({
                         </TableHead>
                         {data.length < 1 ? (
                             <TableBody>
-                                <TableRow>
-                                    <TableCell colSpan={20}>
-                                        {/* <LinearProgress
-                      style={{ marginTop: "-6px" }}
-                      color="secondary"
-                    /> */}
+                                <TableRow key={uniqueId()}>
+                                    <TableCell key={uniqueId()} colSpan={20}>
                                         <Typography variant="subtitle1" color="GrayText" component="p" fontWeight="700">
                                             NO DATA AVAILABLE
                                         </Typography>
@@ -215,19 +209,20 @@ export default function CustomTable({
                                 {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                                     prepareRow(row);
                                     return (
-                                        <TableRow {...row.getRowProps()} hover>
+                                        <TableRow key={uniqueId()} {...row.getRowProps()} hover>
                                             {row.cells.map((cell) => {
                                                 return (
-                                                    <TableCell {...cell.getCellProps()} padding="none" align="center">
+                                                    <TableCell
+                                                        key={uniqueId()}
+                                                        {...cell.getCellProps()}
+                                                        padding="checkbox"
+                                                    >
                                                         <Typography
+                                                            key={uniqueId()}
                                                             variant="subtitle2"
                                                             color="grey"
                                                             component="div"
                                                             display="flex"
-                                                            style={{
-                                                                placeItems: "center",
-                                                                justifyContent: "center",
-                                                            }}
                                                         >
                                                             {cell.render("Cell")}
                                                         </Typography>
@@ -238,8 +233,8 @@ export default function CustomTable({
                                     );
                                 })}
                                 {emptyRows > 0 && (
-                                    <TableRow style={{ height: 40 * emptyRows }}>
-                                        <TableCell colSpan={6} />
+                                    <TableRow key={uniqueId()} style={{ height: 40 * emptyRows }}>
+                                        <TableCell key={uniqueId()} colSpan={6} />
                                     </TableRow>
                                 )}
                             </TableBody>

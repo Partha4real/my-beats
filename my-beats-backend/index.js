@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import connectDB from "./database/database.js";
-import allRoutes from "./routes/index.js";
+import routes from "./routes/index.js";
 
 // express init
 const app = express();
@@ -22,13 +22,13 @@ app.use(express.json({ limit: "50mb", extended: true }));
 app.use(morgan("dev"));
 
 // cors
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 
 // routes
 app.get("/", (req, res) => {
-  res.send("MY BEATS API CONNECTED");
+    res.send("MY BEATS API CONNECTED");
 });
-app.use("/api/v1", allRoutes);
+app.use("/api/v1", routes);
 
 // post
 const PORT = process.env.PORT || 8000;

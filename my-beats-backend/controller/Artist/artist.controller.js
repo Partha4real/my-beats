@@ -11,7 +11,7 @@ export const getAllArtist = async (req, res) => {
                 status: true,
             });
         } else {
-            res.status(200).send({
+            res.status(403).send({
                 message: "No Artists Found",
                 data: data,
                 status: true,
