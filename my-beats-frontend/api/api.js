@@ -57,12 +57,19 @@ export const updateArtist = (id, data) => API.post(`/artist/updateArtist/${id}`,
 export const deleteArtist = (id) => API.delete(`/artist/deleteArtist/${id}`);
 export const deleteMultipleArtist = (data) => API.delete(`/artist/deleteMultipleArtist`, { data: data });
 
-// Albul
+// Albulm
 export const getAlbum = () => API.get("/album/getAlbum");
 export const addAlbum = (data) => API.post("/album/addAlbum", data);
 export const updateAlbum = (id, data) => API.post(`/album/updateAlbum/${id}`, data);
 export const deleteAlbum = (id) => API.delete(`/album/deleteAlbum/${id}`);
 export const deleteMultipleAlbum = (data) => API.delete(`/album/deleteMultipleAlbum`, { data: data });
+
+// Song
+export const getSong = () => API.get("/song/getSong");
+export const addSong = (data) => API.post("/song/addSong", data);
+export const updateSong = (id, data) => API.post(`/song/updateSong/${id}`, data);
+export const deleteSong = (id) => API.delete(`/song/deleteSong/${id}`);
+export const deleteMultipleSong = (data) => API.delete(`/song/deleteMultipleSong`, { data: data });
 
 // Genre
 export const getGenre = () => API.get("/genre/getGenre");

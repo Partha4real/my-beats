@@ -1,17 +1,17 @@
 import express from "express";
 import {
-  getAllSong,
-  getSongByArtist,
-  getSongByAlbum,
-  getSongByGenre,
-  addSong,
-  updateSong,
-  deleteSong,
-  deleteMultipleSong,
+    getAllSong,
+    getSongByArtist,
+    getSongByAlbum,
+    getSongByGenre,
+    addSong,
+    updateSong,
+    deleteSong,
+    deleteMultipleSong,
 } from "../../controller/Song/song.controller.js";
 const router = express.Router();
 
-router.get("/getArtist", getAllSong);
+router.get("/getSong", getAllSong);
 
 router.get("/getSongByArtist/:artistId", getSongByArtist);
 

@@ -98,7 +98,6 @@ function AlbumForm({ album, artist, genre, createAlbum, updateAlbum }) {
     };
 
     const handleAutoCompleteSearch = (e, data, ...rest) => {
-        console.log({ e, data, rest });
         setFormState((value) => ({
             ...value,
             values: {
@@ -116,7 +115,7 @@ function AlbumForm({ album, artist, genre, createAlbum, updateAlbum }) {
             isValid: !errors,
             errors: errors || {},
         }));
-        console.log(formState);
+
         if (errors) return;
 
         if (ID) {

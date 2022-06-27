@@ -1,11 +1,12 @@
 import React from "react";
 import CustomTable from "../../utils/customTable/CustomTable";
-import stringTruncate from "../../hooks/stringTruncate";
+import moment from "moment";
 import TableAction from "../../utils/TableAction/TableAction";
 import { getAllAlbum, deleteAlbum, deleteMultipleAlbum } from "../../data/album/action";
 import { connect } from "react-redux";
 import { useRouter } from "next/dist/client/router";
 import CustomDialog from "../../utils/CustomDialog/CustomDialog";
+import uniqueId from "../../hooks/uniqueId";
 
 function AlbumTable({ album, getAllAlbum, deleteAlbum, deleteMultipleAlbum }) {
     const router = useRouter();
@@ -17,7 +18,7 @@ function AlbumTable({ album, getAllAlbum, deleteAlbum, deleteMultipleAlbum }) {
     }, []);
 
     const handleEdit = (id) => {
-        router.push(`/dashboard/artist/UPDATE-ARTIST?artistID=${id}`);
+        router.push(`/dashboard/album/UPDATE-ALBUM?albumID=${id}`);
     };
 
     const handleDelete = (id) => {
@@ -34,6 +35,15 @@ function AlbumTable({ album, getAllAlbum, deleteAlbum, deleteMultipleAlbum }) {
             {
                 Header: "Album Artist",
                 accessor: "artist",
+                Cell: ({ row }) => (
+                    <div className="genreTagContainer">
+                        {row.original.artist.map((item) => (
+                            <span key={uniqueId()} className="genreTagContainer-item">
+                                {item.name}
+                            </span>
+                        ))}
+                    </div>
+                ),
             },
             {
                 Header: "Album Image",
@@ -43,16 +53,20 @@ function AlbumTable({ album, getAllAlbum, deleteAlbum, deleteMultipleAlbum }) {
             {
                 Header: "Genre",
                 accessor: "genre",
-            },
-            {
-                Header: "Album Description",
-                accessor: "description",
-                Cell: ({ row }) => stringTruncate(row.original.description, 50),
+                Cell: ({ row }) => (
+                    <div className="genreTagContainer">
+                        {row.original.genre.map((item) => (
+                            <span key={uniqueId()} className="genreTagContainer-item">
+                                {item.title}
+                            </span>
+                        ))}
+                    </div>
+                ),
             },
             {
                 Header: "Release Date",
                 accessor: "releaseDate",
-                // Cell: ({ row }) => stringTruncate(row.original.description, 50),
+                Cell: ({ row }) => moment(row.original.releaseDate).format("LL"),
             },
             {
                 Header: "Action",

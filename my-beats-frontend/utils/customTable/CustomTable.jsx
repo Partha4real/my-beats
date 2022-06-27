@@ -161,43 +161,43 @@ export default function CustomTable({
                 <TableContainer>
                     <Table {...getTableProps()} aria-labelledby="tableTitle" size="small" stickyHeader>
                         <TableHead>
-                            {headerGroups.map((headerGroup) => (
-                                <TableRow key={uniqueId()} {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map((column) => {
-                                        return (
-                                            <TableCell
-                                                key={uniqueId()}
-                                                {...column.getHeaderProps(column.getSortByToggleProps())}
-                                            >
-                                                <Typography
+                            {headerGroups.map((headerGroup) => {
+                                return (
+                                    <TableRow key={uniqueId()} {...headerGroup.getHeaderGroupProps()}>
+                                        {headerGroup.headers.map((column) => {
+                                            return (
+                                                <TableCell
                                                     key={uniqueId()}
-                                                    variant="button"
-                                                    color="black"
-                                                    component="div"
-                                                    fontWeight="700"
-                                                    display="flex"
+                                                    {...column.getHeaderProps(column.getSortByToggleProps())}
                                                 >
-                                                    {column.render("Header")}
-                                                    {column.isSorted ? (
-                                                        column.isSortedDesc ? (
-                                                            <KeyboardArrowDown fontSize="small" />
-                                                        ) : (
-                                                            <KeyboardArrowUp fontSize="small" />
-                                                        )
-                                                    ) : (
-                                                        ""
-                                                    )}
-                                                </Typography>
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            ))}
+                                                    <Typography
+                                                        key={uniqueId()}
+                                                        variant="button"
+                                                        color="black"
+                                                        component="div"
+                                                        fontWeight="700"
+                                                        display="flex"
+                                                    >
+                                                        {column.render("Header")}
+                                                        {column.isSorted ? (
+                                                            column.isSortedDesc ? (
+                                                                <KeyboardArrowDown fontSize="small" />
+                                                            ) : (
+                                                                <KeyboardArrowUp fontSize="small" />
+                                                            )
+                                                        ) : null}
+                                                    </Typography>
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                );
+                            })}
                         </TableHead>
                         {data.length < 1 ? (
                             <TableBody>
                                 <TableRow key={uniqueId()}>
-                                    <TableCell key={uniqueId()} colSpan={20}>
+                                    <TableCell key={uniqueId()} colSpan={headerGroups[0].headers.length}>
                                         <Typography variant="subtitle1" color="GrayText" component="p" fontWeight="700">
                                             NO DATA AVAILABLE
                                         </Typography>
@@ -234,7 +234,7 @@ export default function CustomTable({
                                 })}
                                 {emptyRows > 0 && (
                                     <TableRow key={uniqueId()} style={{ height: 40 * emptyRows }}>
-                                        <TableCell key={uniqueId()} colSpan={6} />
+                                        <TableCell key={uniqueId()} colSpan={headerGroups[0].headers.length} />
                                     </TableRow>
                                 )}
                             </TableBody>

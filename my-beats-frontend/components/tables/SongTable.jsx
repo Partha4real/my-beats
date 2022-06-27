@@ -1,90 +1,115 @@
 import React from "react";
+import moment from "moment";
 import CustomTable from "../../utils/customTable/CustomTable";
 import TableAction from "../../utils/TableAction/TableAction";
+import { getAllSong, deleteSong, deleteMultipleSong } from "../../data/song/action";
+import { connect } from "react-redux";
+import { useRouter } from "next/dist/client/router";
+import CustomDialog from "../../utils/CustomDialog/CustomDialog";
+import uniqueId from "../../hooks/uniqueId";
 
-const data = [
-  {
-    name: "Taylor Swift",
-    artistImage:
-      "https://variety.com/wp-content/uploads/2020/01/taylor-swift-variety-cover-5-16x9-1000.jpg?w=681&h=383&crop=1",
-    bioData:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    genre: ["red", "1989"],
-  },
-  {
-    name: "Taylor Swift",
-    artistImage:
-      "https://variety.com/wp-content/uploads/2020/01/taylor-swift-variety-cover-5-16x9-1000.jpg?w=681&h=383&crop=1",
-    bioData:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    genre: ["red", "1989"],
-  },
-  {
-    name: "Taylor Swift",
-    artistImage:
-      "https://variety.com/wp-content/uploads/2020/01/taylor-swift-variety-cover-5-16x9-1000.jpg?w=681&h=383&crop=1",
-    bioData:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    genre: ["red", "1989"],
-  },
-];
+function SongTable({ song, getAllSong, deleteSong, deleteMultipleSong }) {
+    const router = useRouter();
+    const [open, setOpen] = React.useState(false);
+    const [selectedId, setSelectedId] = React.useState(false);
 
-export default function SongTable() {
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Title",
-        accessor: "title",
-      },
-      {
-        Header: "Artist",
-        accessor: "artist",
-      },
-      {
-        Header: "Album",
-        accessor: "album",
-      },
-      {
-        Header: "Song Image",
-        accessor: "musicPicture",
-        Cell: ({ row }) => (
-          <img
-            src={row.original.musicPicture}
-            alt=""
-            className="tableRoundImage"
-          />
-        ),
-      },
-      {
-        Header: "Total Download",
-        accessor: "totalDownload",
-      },
-      {
-        Header: "Genre",
-        accessor: "genre",
-      },
-      {
-        Header: "Release Date",
-        accessor: "releaseDate",
-        // Cell: ({ row }) => stringTruncate(row.original.description, 50),
-      },
-      {
-        Header: "Action",
-        accessor: "action",
-        Cell: ({ row }) => <TableAction />,
-      },
-    ],
-    []
-  );
-  return (
-    <div className="tableContainer">
-      <CustomTable data={data} columns={columns} />
+    React.useEffect(() => {
+        getAllSong();
+    }, []);
 
-      {/* <DialogPopup
-        open={open}
-        setOpen={setOpen}
-        form={<DoctorTypeForm id={UpdateId} width={12} setOpen={setOpen} />}
-      /> */}
-    </div>
-  );
+    const handleEdit = (id) => {
+        router.push(`/dashboard/song/UPDATE-SONG?songID=${id}`);
+    };
+
+    const handleDelete = (id) => {
+        setOpen(true);
+        setSelectedId(id);
+    };
+
+    const columns = React.useMemo(
+        () => [
+            {
+                Header: "Title",
+                accessor: "title",
+            },
+            {
+                Header: "Artist",
+                accessor: "artist",
+                Cell: ({ row }) => (
+                    <div className="genreTagContainer">
+                        {row.original.artist.map((item) => (
+                            <span key={uniqueId()} className="genreTagContainer-item">
+                                {item.name}
+                            </span>
+                        ))}
+                    </div>
+                ),
+            },
+            {
+                Header: "Album",
+                accessor: "album",
+                Cell: ({ row }) => (
+                    <div className="genreTagContainer">
+                        {row.original.album.map((item) => (
+                            <span key={uniqueId()} className="genreTagContainer-item">
+                                {item.name}
+                            </span>
+                        ))}
+                    </div>
+                ),
+            },
+            {
+                Header: "Song Image",
+                accessor: "musicPicture",
+                Cell: ({ row }) => <img src={row.original.musicPicture} alt="" className="tableRoundImage" />,
+            },
+            {
+                Header: "Total Download",
+                accessor: "totalDownload",
+            },
+            {
+                Header: "Genre",
+                accessor: "genre",
+                Cell: ({ row }) => (
+                    <div className="genreTagContainer">
+                        {row.original.genre.map((item) => (
+                            <span key={uniqueId()} className="genreTagContainer-item">
+                                {item.title}
+                            </span>
+                        ))}
+                    </div>
+                ),
+            },
+            {
+                Header: "Release Date",
+                accessor: "releaseDate",
+                Cell: ({ row }) => moment(row.original.releaseDate).format("LL"),
+            },
+            {
+                Header: "Action",
+                accessor: "action",
+                Cell: ({ row }) => (
+                    <TableAction
+                        handleEdit={() => handleEdit(row.original._id)}
+                        handleDelete={() => handleDelete(row.original._id)}
+                    />
+                ),
+            },
+        ],
+        [],
+    );
+    return (
+        <div className="tableContainer">
+            <CustomTable data={song} columns={columns} deleteSelectedFunction={(ids) => deleteMultipleSong(ids)} />
+
+            <CustomDialog open={open} setOpen={setOpen} deleteFunction={() => deleteSong(selectedId)} />
+        </div>
+    );
 }
+
+const mapStateToProps = (state) => ({
+    loader: state.loader,
+    song: state.song,
+});
+
+export default connect(mapStateToProps, { getAllSong, deleteSong, deleteMultipleSong })(SongTable);

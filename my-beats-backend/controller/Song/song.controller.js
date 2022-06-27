@@ -8,6 +8,7 @@ export const getAllSong = async (req, res) => {
             .populate("album", { _id: 1, name: 1, albumPicture: 1 })
             .populate("genre", { _id: 1, title: 1 })
             .populate("originCountry", { _id: 1, countryName: 1 })
+            .populate("tag", { _id: 1, title: 1 })
             .sort({ createdAt: "desc" });
 
         if (data.length > 0) {
@@ -41,6 +42,7 @@ export const getSongByArtist = async (req, res) => {
             .populate("album", { _id: 1, name: 1, albumPicture: 1 })
             .populate("genre", { _id: 1, title: 1 })
             .populate("originCountry", { _id: 1, countryName: 1 })
+            .populate("tag", { _id: 1, title: 1 })
             .sort({ createdAt: "desc" });
 
         if (data.length > 0) {
@@ -74,6 +76,7 @@ export const getSongByAlbum = async (req, res) => {
             .populate("album", { _id: 1, name: 1, albumPicture: 1 })
             .populate("genre", { _id: 1, title: 1 })
             .populate("originCountry", { _id: 1, countryName: 1 })
+            .populate("tag", { _id: 1, title: 1 })
             .sort({ createdAt: "desc" });
 
         if (data.length > 0) {
@@ -107,6 +110,7 @@ export const getSongByGenre = async (req, res) => {
             .populate("album", { _id: 1, name: 1, albumPicture: 1 })
             .populate("genre", { _id: 1, title: 1 })
             .populate("originCountry", { _id: 1, countryName: 1 })
+            .populate("tag", { _id: 1, title: 1 })
             .sort({ createdAt: "desc" });
 
         if (data.length > 0) {

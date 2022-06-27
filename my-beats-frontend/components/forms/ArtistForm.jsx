@@ -81,10 +81,6 @@ function ArtistForm({ artist, genre, createArtist, updateArtist }) {
     };
 
     const handleAutoCompleteChange = (e, data) => {
-        const idArray = [];
-        for (let index = 0; index < data.length; index++) {
-            idArray.push(data[index]._id);
-        }
         setFormState((value) => ({
             ...value,
             values: {

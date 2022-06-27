@@ -31,6 +31,7 @@ export function AutoCompleteMultiple({
     half,
     name,
     label,
+    multiple = true,
     required,
     value,
     handleChange,
@@ -46,11 +47,16 @@ export function AutoCompleteMultiple({
                 {label}
             </InputLabel>
             <Autocomplete
-                multiple={true}
+                multiple={multiple}
                 size="small"
-                id="tags-outlined"
                 options={options}
-                getOptionLabel={(option) => option.title || option.name}
+                getOptionLabel={(option) => {
+                    if (Array.isArray(option) && option.length) {
+                        return option.map((item) => (item?.title ? item?.title : item?.name));
+                    } else {
+                        return option?.title ? option?.title : option?.name;
+                    }
+                }}
                 value={value}
                 onChange={handleChange}
                 filterSelectedOptions={true}
@@ -91,7 +97,6 @@ export function AutoCompleteSearch({
             <Autocomplete
                 // freeSolo
                 size="small"
-                id="free-solo-2-demo"
                 value={value}
                 options={options.map((option) => (option.title ? option.title : option.name))}
                 onChange={handleChange}

@@ -11,21 +11,25 @@ const songSchema = mongoose.Schema(
             type: String,
             default: base64Image.noImage,
         },
-        artist: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Artist",
-            required: true,
-        },
+        artist: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Artist",
+                required: true,
+            },
+        ],
         featuredArtist: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Artist",
             },
         ],
-        album: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Album",
-        },
+        album: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Album",
+            },
+        ],
         genre: [
             {
                 type: mongoose.Schema.Types.ObjectId,

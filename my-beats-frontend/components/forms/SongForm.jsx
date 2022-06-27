@@ -4,27 +4,35 @@ import Validate from "validate.js";
 import { Grid } from "@mui/material";
 import { AutoCompleteMultiple, AutoCompleteSearch } from "../../utils/CustomAutoComplete/CustomAutoComplete";
 import CustomFilefield from "../../utils/CustomFilefield/CustomFilefield";
-import Inputfield from "../../utils/CustomTextfield/CustomTextfield";
+import Inputfield, { TimeField } from "../../utils/CustomTextfield/CustomTextfield";
 import PreviewImage from "../../utils/PreviewImage/PreviewImage";
 import TextEditor from "../../utils/TextEditor/TextEditor";
 import { requiredValidation, textValidation } from "../../hooks/formValidation";
 import convertToBase64 from "../../hooks/convertToBase64";
 import hasErrors from "../../hooks/hasErrors";
+import { createSong, updateSong } from "../../data/song/action";
+import { connect } from "react-redux";
+import { useRouter } from "next/dist/client/router";
 
 const schema = {
-    title: textValidation(250),
-    // subtitle: textValidation(250),
-    image: requiredValidation,
+    title: textValidation(200),
+    musicPicture: requiredValidation,
+    artist: requiredValidation,
+    genre: requiredValidation,
+    originCountry: requiredValidation,
+    releaseDate: requiredValidation,
 };
 
 const initialState = {
     values: {
         title: "",
         musicPicture: "",
-        artist: "",
-        album: "",
+        artist: [],
+        featuredArtist: [],
+        album: [],
         genre: [],
-        originCountry: "",
+        tag: [],
+        originCountry: null,
         lyrics: "",
         releaseDate: "",
         description: "",
@@ -33,9 +41,23 @@ const initialState = {
     errors: {},
 };
 
-export default function SongForm() {
+function SongForm({ song, artist, genre, album, tag, createSong, updateSong }) {
+    const router = useRouter();
     const [formState, setFormState] = React.useState(initialState);
+    const ID = router.query.songID;
 
+    React.useEffect(() => {
+        if (router.query.songID) {
+            const currentData = song.find((item) => item._id === router.query.songID);
+            setFormState((value) => ({
+                ...value,
+                values: {
+                    ...currentData,
+                },
+            }));
+        }
+    }, [router]);
+    console.log({ formState });
     const handleEditorChange = (data) => {
         setFormState((value) => ({
             ...value,
@@ -69,22 +91,22 @@ export default function SongForm() {
         }
     };
 
-    const handleGenreAutoCompleteChange = (e, data, dd, ff, der = "parth") => {
-        console.log(dd, ff, der);
+    const handleAutoCompleteMultiple = (e, data, field) => {
         setFormState((value) => ({
             ...value,
             values: {
                 ...formState.values,
-                genre: data,
+                [field]: data,
             },
         }));
     };
-    const handleCountryAutoCompleteChange = (e, data) => {
+
+    const handleAutoCompleteSearch = (e, data, ...rest) => {
         setFormState((value) => ({
             ...value,
             values: {
                 ...formState.values,
-                originCountry: data,
+                [rest[2]]: data,
             },
         }));
     };
@@ -99,28 +121,25 @@ export default function SongForm() {
         }));
         if (errors) return;
 
-        // if (id !== undefined) {
-        //   //update lab type
-        //   dispatch(updateBanner(id, formState.values));
-        //   setOpen(false);
-        // } else {
-        //   // create nurse
-        //   dispatch(createBanner(formState.values));
-        //   setValue(0);
+        if (ID) {
+            //update song
+            updateSong(ID, formState.values);
+            router.push("/dashboard/song/VIEW-SONG");
+        } else {
+            // create song
+            createSong(formState.values);
+        }
+        setFormState(initialState);
     };
-    const option = [
-        {
-            id: "1",
-            title: "dssd",
-        },
-        {
-            id: "2",
-            title: "ghhh",
-        },
-    ];
+
     return (
-        <div>
-            <AddButton heading="Add Artist" title="Create" />
+        <React.Fragment>
+            <AddButton
+                heading={router.query.songID ? "Update Song" : "Add S0ng"}
+                title={router.query.songID ? "Save" : "Create"}
+                handleAddClick={(e) => handleSubmit(e)}
+            />
+
             <Grid container spacing={1}>
                 <Grid item xs={12} md={9}>
                     <Grid container spacing={3}>
@@ -142,10 +161,57 @@ export default function SongForm() {
                             hasErrors={(field) => hasErrors(field, formState)}
                         />
 
-                        <Inputfield
+                        {/* <AutoCompleteSearch
+                            half
+                            label="Song Album"
+                            name="album"
+                            options={album}
+                            value={formState.values.album}
+                            formState={formState}
+                            handleChange={(e, data, selectedOption, options) =>
+                                handleAutoCompleteSearch(e, data, selectedOption, options, "album")
+                            }
+                            hasErrors={(field) => hasErrors(field, formState)}
+                        /> */}
+
+                        <AutoCompleteMultiple
+                            half
+                            label="Song Album"
+                            name="album"
+                            options={album}
+                            multiple={false}
+                            value={formState.values.album}
+                            formState={formState}
+                            handleChange={(e, data) => handleAutoCompleteMultiple(e, data, "album")}
+                            hasErrors={(field) => hasErrors(field, formState)}
+                        />
+
+                        <AutoCompleteMultiple
                             half
                             label="Song Artist"
                             name="artist"
+                            options={artist}
+                            value={formState.values.artist}
+                            formState={formState}
+                            handleChange={(e, data) => handleAutoCompleteMultiple(e, data, "artist")}
+                            hasErrors={(field) => hasErrors(field, formState)}
+                        />
+
+                        <AutoCompleteMultiple
+                            half
+                            label="Song Featured Artist"
+                            name="featuredArtist"
+                            options={artist}
+                            value={formState.values.featuredArtist}
+                            formState={formState}
+                            handleChange={(e, data) => handleAutoCompleteMultiple(e, data, "featuredArtist")}
+                            hasErrors={(field) => hasErrors(field, formState)}
+                        />
+
+                        <TimeField
+                            half
+                            label="Release Date"
+                            name="releaseDate"
                             formState={formState}
                             handleChange={handleChange}
                             hasErrors={(field) => hasErrors(field, formState)}
@@ -164,18 +230,33 @@ export default function SongForm() {
                             half
                             label="Genre"
                             name="genre"
+                            options={genre}
                             value={formState.values.genre}
                             formState={formState}
-                            handleChange={handleGenreAutoCompleteChange}
+                            handleChange={(e, data) => handleAutoCompleteMultiple(e, data, "genre")}
                             hasErrors={(field) => hasErrors(field, formState)}
                         />
+
+                        <AutoCompleteMultiple
+                            half
+                            label="Song Tag"
+                            name="tag"
+                            options={tag}
+                            value={formState.values.tag}
+                            formState={formState}
+                            handleChange={(e, data) => handleAutoCompleteMultiple(e, data, "tag")}
+                            hasErrors={(field) => hasErrors(field, formState)}
+                        />
+
                         <AutoCompleteSearch
                             half
                             label="Origin Country"
                             name="originCountry"
                             value={formState.values.originCountry}
                             formState={formState}
-                            handleChange={handleCountryAutoCompleteChange}
+                            handleChange={(e, data, selectedOption, options) =>
+                                handleAutoCompleteSearch(e, data, selectedOption, options, "originCountry")
+                            }
                             hasErrors={(field) => hasErrors(field, formState)}
                         />
 
@@ -190,11 +271,22 @@ export default function SongForm() {
                 <Grid item xs={12} md={3}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12}>
-                            <PreviewImage src={formState.values.artistImage} />
+                            <PreviewImage src={formState.values.musicPicture} />
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-        </div>
+        </React.Fragment>
     );
 }
+
+const mapStateToProps = (state) => ({
+    loader: state.loader,
+    song: state.song,
+    artist: state.artist,
+    album: state.album,
+    tag: state.tag,
+    genre: state.genre,
+});
+
+export default connect(mapStateToProps, { createSong, updateSong })(SongForm);
