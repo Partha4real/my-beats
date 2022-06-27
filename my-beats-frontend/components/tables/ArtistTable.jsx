@@ -6,6 +6,7 @@ import { getAllArtist, deleteArtist, deleteMultipleArtist } from "../../data/art
 import { connect } from "react-redux";
 import { useRouter } from "next/dist/client/router";
 import CustomDialog from "../../utils/CustomDialog/CustomDialog";
+import uniqueId from "../../hooks/uniqueId";
 
 function ArtistTable({ getAllArtist, deleteArtist, deleteMultipleArtist, artist }) {
     const router = useRouter();
@@ -46,7 +47,9 @@ function ArtistTable({ getAllArtist, deleteArtist, deleteMultipleArtist, artist 
                 Cell: ({ row }) => (
                     <div className="genreTagContainer">
                         {row.original.genre.map((item) => (
-                            <span className="genreTagContainer-item">{item.title}</span>
+                            <span key={uniqueId()} className="genreTagContainer-item">
+                                {item.title}
+                            </span>
                         ))}
                     </div>
                 ),

@@ -4,24 +4,30 @@ import Validate from "validate.js";
 import { Grid } from "@mui/material";
 import { AutoCompleteMultiple, AutoCompleteSearch } from "../../utils/CustomAutoComplete/CustomAutoComplete";
 import CustomFilefield from "../../utils/CustomFilefield/CustomFilefield";
-import Inputfield from "../../utils/CustomTextfield/CustomTextfield";
+import Inputfield, { TimeField } from "../../utils/CustomTextfield/CustomTextfield";
 import PreviewImage from "../../utils/PreviewImage/PreviewImage";
 import TextEditor from "../../utils/TextEditor/TextEditor";
 import { requiredValidation, textValidation } from "../../hooks/formValidation";
 import convertToBase64 from "../../hooks/convertToBase64";
 import hasErrors from "../../hooks/hasErrors";
+import { useRouter } from "next/dist/client/router";
+import { createAlbum, updateAlbum } from "../../data/album/action";
+import { connect } from "react-redux";
 
 const schema = {
-    title: textValidation(250),
-    // subtitle: textValidation(250),
-    image: requiredValidation,
+    name: textValidation(150),
+    albumPicture: requiredValidation,
+    artist: requiredValidation,
+    genre: requiredValidation,
+    originCountry: requiredValidation,
+    releaseDate: requiredValidation,
 };
 
 const initialState = {
     values: {
         name: "",
         albumPicture: "",
-        artist: "",
+        artist: [],
         genre: [],
         originCountry: null,
         releaseDate: "",
@@ -31,8 +37,22 @@ const initialState = {
     errors: {},
 };
 
-export default function AlbumForm() {
+function AlbumForm({ album, artist, genre, createAlbum, updateAlbum }) {
+    const router = useRouter();
     const [formState, setFormState] = React.useState(initialState);
+    const ID = router.query.albumID;
+
+    React.useEffect(() => {
+        if (router.query.albumID) {
+            const currentData = album.find((item) => item._id === router.query.albumID);
+            setFormState((value) => ({
+                ...value,
+                values: {
+                    ...currentData,
+                },
+            }));
+        }
+    }, [router]);
 
     const handleEditorChange = (data) => {
         setFormState((value) => ({
@@ -67,24 +87,23 @@ export default function AlbumForm() {
         }
     };
 
-    const handleAutoCompleteMultiple = (e, data) => {
+    const handleAutoCompleteMultiple = (e, data, field) => {
         setFormState((value) => ({
             ...value,
             values: {
                 ...formState.values,
-                genre: data,
+                [field]: data,
             },
         }));
     };
 
     const handleAutoCompleteSearch = (e, data, ...rest) => {
-        console.log(JSON.stringify(data, null, " "));
-        console.log(rest);
+        console.log({ e, data, rest });
         setFormState((value) => ({
             ...value,
             values: {
                 ...formState.values,
-                // [name]: data,
+                [rest[2]]: data,
             },
         }));
     };
@@ -97,31 +116,27 @@ export default function AlbumForm() {
             isValid: !errors,
             errors: errors || {},
         }));
+        console.log(formState);
         if (errors) return;
 
-        // if (id !== undefined) {
-        //   //update lab type
-        //   dispatch(updateBanner(id, formState.values));
-        //   setOpen(false);
-        // } else {
-        //   // create nurse
-        //   dispatch(createBanner(formState.values));
-        //   setValue(0);
+        if (ID) {
+            //update album
+            updateAlbum(ID, formState.values);
+            router.push("/dashboard/album/VIEW-ALBUM");
+        } else {
+            // create album
+            createAlbum(formState.values);
+        }
+        setFormState(initialState);
     };
-    const option = [
-        {
-            id: "1",
-            title: "dssd",
-        },
-        {
-            id: "2",
-            title: "ghhh",
-        },
-    ];
-    console.log(formState);
+
     return (
-        <div>
-            <AddButton heading="Add Artist" title="Create" />
+        <React.Fragment>
+            <AddButton
+                heading={router.query.artistID ? "Update Album" : "Add Album"}
+                title={router.query.albumID ? "Save" : "Create"}
+                handleAddClick={(e) => handleSubmit(e)}
+            />
             <Grid container spacing={1}>
                 <Grid item xs={12} md={9}>
                     <Grid container spacing={3}>
@@ -143,15 +158,23 @@ export default function AlbumForm() {
                             hasErrors={(field) => hasErrors(field, formState)}
                         />
 
-                        <Inputfield
-                            half
+                        <AutoCompleteMultiple
                             label="Album Artist"
                             name="artist"
+                            options={artist}
+                            value={formState.values.artist}
+                            formState={formState}
+                            handleChange={(e, data) => handleAutoCompleteMultiple(e, data, "artist")}
+                            hasErrors={(field) => hasErrors(field, formState)}
+                        />
+                        <TimeField
+                            half
+                            label="Release Date"
+                            name="releaseDate"
                             formState={formState}
                             handleChange={handleChange}
                             hasErrors={(field) => hasErrors(field, formState)}
                         />
-
                         <Inputfield
                             half
                             label="Download Link"
@@ -165,9 +188,10 @@ export default function AlbumForm() {
                             half
                             label="Genre"
                             name="genre"
+                            options={genre}
                             value={formState.values.genre}
                             formState={formState}
-                            handleChange={handleAutoCompleteMultiple}
+                            handleChange={(e, data) => handleAutoCompleteMultiple(e, data, "genre")}
                             hasErrors={(field) => hasErrors(field, formState)}
                         />
                         <AutoCompleteSearch
@@ -176,8 +200,8 @@ export default function AlbumForm() {
                             name="originCountry"
                             value={formState.values.originCountry}
                             formState={formState}
-                            handleChange={(e, data, selectedOption, options, name) =>
-                                handleAutoCompleteSearch(e, data, selectedOption, options, (name = "originCountry"))
+                            handleChange={(e, data, selectedOption, options) =>
+                                handleAutoCompleteSearch(e, data, selectedOption, options, "originCountry")
                             }
                             hasErrors={(field) => hasErrors(field, formState)}
                         />
@@ -193,11 +217,20 @@ export default function AlbumForm() {
                 <Grid item xs={12} md={3}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12}>
-                            <PreviewImage src={formState.values.artistImage} />
+                            <PreviewImage src={formState.values.albumPicture} />
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-        </div>
+        </React.Fragment>
     );
 }
+
+const mapStateToProps = (state) => ({
+    loader: state.loader,
+    album: state.album,
+    artist: state.artist,
+    genre: state.genre,
+});
+
+export default connect(mapStateToProps, { createAlbum, updateAlbum })(AlbumForm);

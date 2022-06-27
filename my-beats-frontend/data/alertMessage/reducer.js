@@ -12,7 +12,10 @@ export default function user(state = initialState, action) {
             return {
                 ...action.payload,
             };
-
+        case actionTypes.UNSET_ALERT:
+            return {
+                ...initialState,
+            };
         default:
             return state;
     }

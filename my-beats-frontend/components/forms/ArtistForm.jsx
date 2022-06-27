@@ -116,7 +116,7 @@ function ArtistForm({ artist, genre, createArtist, updateArtist }) {
     };
 
     return (
-        <div>
+        <React.Fragment>
             <AddButton
                 heading={router.query.artistID ? "Update Artist" : "Add Artist"}
                 title={router.query.artistID ? "Save" : "Create"}
@@ -171,7 +171,7 @@ function ArtistForm({ artist, genre, createArtist, updateArtist }) {
                     </Grid>
                 </Grid>
             </Grid>
-        </div>
+        </React.Fragment>
     );
 }
 

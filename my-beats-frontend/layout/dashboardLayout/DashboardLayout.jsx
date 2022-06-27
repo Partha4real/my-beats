@@ -16,6 +16,9 @@ import { connect } from "react-redux";
 const drawerWidth = 240;
 
 const useStyles = makeStyles({
+    list: {
+        padding: 0,
+    },
     listItem: {
         borderRight: "3px solid red",
         background: "lightpink",
@@ -106,7 +109,6 @@ function DashboardLayout({ alertMessage = [], children }) {
                 message={alertMessage.message}
                 alertType={alertMessage.alertType}
             />
-            ;
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
@@ -114,7 +116,7 @@ function DashboardLayout({ alertMessage = [], children }) {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List>
+                <List className={classes.list}>
                     {menuArray.map((menu) => (
                         <ListItem
                             button

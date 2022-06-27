@@ -50,7 +50,7 @@ export function AutoCompleteMultiple({
                 size="small"
                 id="tags-outlined"
                 options={options}
-                getOptionLabel={(option) => option.title}
+                getOptionLabel={(option) => option.title || option.name}
                 value={value}
                 onChange={handleChange}
                 filterSelectedOptions={true}

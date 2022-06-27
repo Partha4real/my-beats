@@ -13,9 +13,7 @@ export default function DashboardHome() {
             </Head>
 
             <main>
-                <DashboardLayout>
-                    <AlertMessage isOpen={true} message="dddd" alertType="error" />;
-                </DashboardLayout>
+                <DashboardLayout></DashboardLayout>
             </main>
         </div>
     );

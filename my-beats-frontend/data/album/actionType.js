@@ -1,0 +1,6 @@
+// blog
+export const FETCH_ALBUM = "FETCH_ALBUM";
+export const CREATE_ALBUM = "CREATE_ALBUM";
+export const UPDATE_ALBUM = "UPDATE_ALBUM";
+export const DELETE_ALBUM = "DELETE_ALBUM";
+export const DELETE_MULTIPLE_ALBUM = "DELETE_MULTIPLE_ALBUM";
